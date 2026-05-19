@@ -25,8 +25,6 @@ export default function HomePage() {
     );
   };
 
-  const { socketState } = useSocket(handleNewFeed, handleFeedUpdated);
-
   const fetchFeeds = async () => {
     try {
       setLoading(true);
@@ -46,6 +44,10 @@ export default function HomePage() {
       setLoading(false);
     }
   };
+
+  const { socketState } = useSocket(handleNewFeed, handleFeedUpdated, fetchFeeds);
+
+
 
   useEffect(() => { fetchFeeds(); }, []);
 

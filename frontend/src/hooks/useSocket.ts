@@ -25,7 +25,8 @@ export interface SocketState {
 
 export function useSocket(
   onNewFeed?: (feed: FeedItem) => void,
-  onFeedUpdated?: (update: { id: string; likes_count: number }) => void
+  onFeedUpdated?: (update: { id: string; likes_count: number }) => void,
+  onReconnect?: () => void
 ) {
   const [socketState, setSocketState] = useState<SocketState>({
     connected: false,
@@ -60,6 +61,13 @@ export function useSocket(
 
     socket.on('connect', () => {
       console.log('Socket.IO Connected! ID:', socket.id);
+      
+      // If we were reconnecting previously, this is a successful reconnect
+      if (socketRef.current && socketState.reconnecting && onReconnect) {
+        console.log('Socket.IO successfully reconnected. Triggering onReconnect callback.');
+        onReconnect();
+      }
+
       setSocketState({
         connected: true,
         reconnecting: false,
